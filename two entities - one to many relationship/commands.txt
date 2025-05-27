@@ -1,0 +1,40 @@
+To run the virtual environment - 
+python3 -m venv .venv
+source .venv/bin/activate
+
+TO run the flask app
+flask run
+
+Adding SQLALchemy Database config to app.py under create_app()
+app.config["SQLALCHEMY_DATABASE_URI"] = db_url or os.getenv("DATABASE_URL", "sqlite:///data.db")
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    db.init_app(app)
+    
+    with app.app_context():
+        db.create_all()
+
+Dockerfile commands
+FROM python:3.13
+EXPOSE 5000
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+CMD ["flask", "run", "--host", "0.0.0.0"]
+
+Run the docker
+docker build -t docker_tag_name .
+docker run -dp 5000:5000 docker_tag_name
+docker run -dp 5000:5000 -w /app -v "$(pwd):/app" docker_tag_name
+
+Adding Flask-smorest config, along with openapi/ swagger
+
+    app.config["PROPAGATE_EXCEPTIONS"] = True
+    app.config["API_TITLE"] = "Patient-Doctor REST API"
+    app.config["API_VERSION"] = "v1"
+    app.config["OPENAPI_VERSION"] = "3.0.3"
+    app.config["OPENAPI_URL_PREFIX"] = "/"
+    app.config["OPENAPI_SWAGGER_UI_PATH"] = "/swagger-ui"
+    app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
+
+
